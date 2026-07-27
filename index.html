@@ -5,9 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0b132b" />
   <title>Nexo Travel IA</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="manifest" href="manifest.json?v=6" />
+  <link rel="stylesheet" href="styles.css?v=6" />
   <style>.live{background:#ffe7e7;color:#a42020}.tracker{position:relative;overflow:hidden}.tracker:before{content:"";position:absolute;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(67,97,238,.12),transparent 68%);right:-60px;top:-80px;pointer-events:none}.tracker-intro{max-width:760px;color:#526078;line-height:1.65}.tracker-form{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:end;margin-top:22px}.tracker-form label{display:flex;flex-direction:column;gap:7px;font-size:.9rem;font-weight:800}.tracker-form input{padding:15px;border:1px solid var(--line);border-radius:12px;background:#fbfcfe;font:inherit;text-transform:uppercase;letter-spacing:.08em}.tracker-result{margin-top:18px;padding:18px;border:1px solid #ccd7ff;border-radius:16px;background:#f3f6ff;display:flex;align-items:center;justify-content:space-between;gap:16px}.tracker-result.hidden{display:none}.tracker-result small,.tracker-result strong,.tracker-result span{display:block}.tracker-result strong{font-size:1.8rem;margin:3px 0}.tracker-result span{color:#657087}.legal-note{font-size:.78rem;color:#7a8498;margin:16px 0 0}@media(max-width:760px){.tracker-form{grid-template-columns:1fr}.tracker-result{align-items:stretch;flex-direction:column}.tracker-result .secondary{width:100%}}</style>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(registrations => registrations.forEach(reg => reg.unregister()));
+    }
+    if ('caches' in window) {
+      caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
+    }
+  </script>
 </head>
 <body>
   <header class="topbar">
@@ -46,6 +54,6 @@
   </main>
   <nav class="bottom-nav"><button class="active" data-scroll="recommendations">⌂<span>Inicio</span></button><button data-scroll="flightTracker">📡<span>Rastrear</span></button><button data-scroll="airportMode">▣<span>Aeropuerto</span></button><button data-scroll="plans">★<span>Premium</span></button></nav>
   <dialog id="destinationModal"><button class="close" id="closeModal">×</button><img id="modalImage" alt="" /><div class="modal-content"><span class="eyebrow" id="modalCountry"></span><h2 id="modalTitle"></h2><p id="modalDescription"></p><div class="facts" id="modalFacts"></div><h3>La posta</h3><p id="modalTruth" class="truth"></p><button class="primary" id="buildTripBtn">Armame este viaje</button></div></dialog>
-  <div id="toast" class="toast"></div><script src="app.js"></script>
+  <div id="toast" class="toast"></div><script src="app.js?v=6"></script>
 </body>
 </html>
