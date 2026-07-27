@@ -16,4 +16,3 @@ function openTrackedFlight(){if(!trackedFlight){toast("Primero ingresá un núme
 $("#flightTrackerForm").addEventListener("submit",e=>{e.preventDefault();trackedFlight=normalizeFlight($("#trackerFlight").value);if(trackedFlight.length<3){toast("Ingresá un número de vuelo válido");return}$("#trackerFlight").value=trackedFlight;$("#trackedFlight").textContent=trackedFlight;$("#trackerResult").classList.remove("hidden");localStorage.setItem("nexoTrackedFlight",trackedFlight);openTrackedFlight()});
 $("#openFr24Btn").addEventListener("click",openTrackedFlight);
 const savedFlight=normalizeFlight(localStorage.getItem("nexoTrackedFlight")||"");if(savedFlight){trackedFlight=savedFlight;$("#trackerFlight").value=savedFlight;$("#trackedFlight").textContent=savedFlight;$("#trackerResult").classList.remove("hidden")}
-if("serviceWorker" in navigator)navigator.serviceWorker.register("service-worker.js").catch(()=>{});
