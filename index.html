@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b132b" />
+  <title>Nexo Travel IA</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div><span class="eyebrow">TU COMPAÑERO DE VIAJE</span><h1>Nexo Travel IA</h1></div>
+    <button class="avatar" id="profileBtn" aria-label="Perfil">WR</button>
+  </header>
+  <main>
+    <section class="hero"><div class="hero-overlay"><p class="hero-kicker">Todo tu viaje, en un solo lugar</p><h2>¿A dónde querés viajar?</h2>
+      <form id="searchForm" class="search-box"><input id="destinationInput" list="destinations" placeholder="Ej.: Bariloche, Río, Madrid..." required /><datalist id="destinations"><option value="Bariloche"></option><option value="Río de Janeiro"></option><option value="Madrid"></option><option value="Tokio"></option><option value="Lima"></option><option value="Santiago de Chile"></option></datalist><button type="submit">Explorar</button></form>
+      <div class="quick-actions"><button data-scroll="cheapFlights">✈️ Vuelos baratos</button><button data-scroll="budgetPlanner">💰 Viajar con mi presupuesto</button><button data-scroll="airportMode">🛫 Modo aeropuerto</button></div>
+    </div></section>
+    <section class="section" id="recommendations"><div class="section-heading"><div><span class="eyebrow">INSPIRACIÓN</span><h2>Destinos recomendados</h2></div><button class="text-btn" id="shuffleBtn">Cambiar</button></div><div class="card-grid" id="destinationCards"></div></section>
+    <section class="section panel" id="cheapFlights"><div class="section-heading"><div><span class="eyebrow">ALERTAS INTELIGENTES</span><h2>Encontrá vuelos baratos</h2></div><span class="pill free">GRATIS</span></div>
+      <form id="flightAlertForm" class="form-grid"><label>Desde<input id="origin" value="Buenos Aires" required /></label><label>Hacia<input id="flightDestination" placeholder="Cualquier destino" required /></label><label>Presupuesto máximo<input id="maxBudget" type="number" min="1" placeholder="$ 800.000" required /></label><label>Fechas<select id="dateFlex"><option>Flexibles</option><option>Próximo mes</option><option>Próximos 3 meses</option><option>Fecha exacta</option></select></label><button class="primary full" type="submit">Crear alerta</button></form><div id="alertResult" class="result-box hidden"></div>
+    </section>
+    <section class="section panel" id="budgetPlanner"><div class="section-heading"><div><span class="eyebrow">DESCUBRÍ OPCIONES</span><h2>¿A dónde puedo ir con mi presupuesto?</h2></div></div>
+      <form id="budgetForm" class="form-grid"><label>Presupuesto total<input id="tripBudget" type="number" min="1" value="700000" required /></label><label>Días de viaje<input id="tripDays" type="number" min="1" max="60" value="7" required /></label><label>Estilo<select id="travelStyle"><option value="equilibrado">Equilibrado</option><option value="economico">Económico</option><option value="confort">Confort</option></select></label><label>Mes<select id="travelMonth"><option>Agosto</option><option>Septiembre</option><option>Octubre</option><option>Noviembre</option><option>Diciembre</option></select></label><button class="primary full" type="submit">Buscar destinos posibles</button></form><div id="budgetResults" class="mini-grid"></div>
+    </section>
+    <section class="section panel airport" id="airportMode"><div class="section-heading"><div><span class="eyebrow">FUNCIÓN DIFERENCIAL</span><h2>Modo aeropuerto</h2></div><label class="switch"><input type="checkbox" id="airportToggle" /><span></span></label></div><p class="muted">Al activarlo, la app muestra primero la información más urgente de tu viaje.</p><div id="airportContent" class="airport-content disabled"><div class="flight-status"><div><small>PRÓXIMO VUELO</small><strong>LA 424</strong><span>AEP → SCL</span></div><div class="status on-time">A horario</div></div><div class="flight-facts"><div><small>Puerta</small><strong>14</strong></div><div><small>Embarque</small><strong>10:40</strong></div><div><small>Salida</small><strong>11:20</strong></div><div><small>Caminata</small><strong>8 min</strong></div></div><button class="secondary" id="notifyFlightBtn">Activar avisos del vuelo</button></div></section>
+    <section class="section" id="plans"><div class="section-heading"><div><span class="eyebrow">MODELO FREEMIUM</span><h2>Planes</h2></div></div><div class="plans-grid"><article class="plan-card"><span class="pill free">GRATIS</span><h3>Explorador</h3><p>Para descubrir, organizar y seguir tus viajes.</p><ul><li>Destinos, fotos y recomendaciones</li><li>Alertas básicas de vuelos baratos</li><li>Modo aeropuerto</li><li>3 consultas IA por día</li></ul><button class="secondary">Plan actual</button></article><article class="plan-card featured"><span class="pill premium">PREMIUM</span><h3>Viajero Pro</h3><p>Para quien quiere que la app piense y avise sola.</p><ul><li>Alertas ilimitadas y predicción de precio</li><li>Itinerarios automáticos completos</li><li>Mapas y documentos sin conexión</li><li>Seguimiento de cambios de puerta y demoras</li><li>Compartir viaje en tiempo real</li></ul><button class="primary" id="premiumBtn">Probar Premium</button></article></div></section>
+  </main>
+  <nav class="bottom-nav"><button class="active" data-scroll="recommendations">⌂<span>Inicio</span></button><button data-scroll="cheapFlights">✈<span>Vuelos</span></button><button data-scroll="airportMode">▣<span>Aeropuerto</span></button><button data-scroll="plans">★<span>Premium</span></button></nav>
+  <dialog id="destinationModal"><button class="close" id="closeModal">×</button><img id="modalImage" alt="" /><div class="modal-content"><span class="eyebrow" id="modalCountry"></span><h2 id="modalTitle"></h2><p id="modalDescription"></p><div class="facts" id="modalFacts"></div><h3>La posta</h3><p id="modalTruth" class="truth"></p><button class="primary" id="buildTripBtn">Armame este viaje</button></div></dialog>
+  <div id="toast" class="toast"></div><script src="app.js"></script>
+</body>
+</html>
