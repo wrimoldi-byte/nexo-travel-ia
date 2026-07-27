@@ -1,0 +1,10 @@
+{
+  "name": "Nexo Travel IA",
+  "short_name": "Nexo Travel",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#0b132b",
+  "description": "Prototipo de app de viajes con destinos, vuelos baratos y modo aeropuerto.",
+  "icons": []
+}
