@@ -5,16 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0b132b" />
   <title>Nexo Travel IA</title>
-  <link rel="manifest" href="manifest.json?v=6" />
-  <link rel="stylesheet" href="styles.css?v=6" />
-  <style>.live{background:#ffe7e7;color:#a42020}.tracker{position:relative;overflow:hidden}.tracker:before{content:"";position:absolute;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(67,97,238,.12),transparent 68%);right:-60px;top:-80px;pointer-events:none}.tracker-intro{max-width:760px;color:#526078;line-height:1.65}.tracker-form{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:end;margin-top:22px}.tracker-form label{display:flex;flex-direction:column;gap:7px;font-size:.9rem;font-weight:800}.tracker-form input{padding:15px;border:1px solid var(--line);border-radius:12px;background:#fbfcfe;font:inherit;text-transform:uppercase;letter-spacing:.08em}.tracker-result{margin-top:18px;padding:18px;border:1px solid #ccd7ff;border-radius:16px;background:#f3f6ff;display:flex;align-items:center;justify-content:space-between;gap:16px}.tracker-result.hidden{display:none}.tracker-result small,.tracker-result strong,.tracker-result span{display:block}.tracker-result strong{font-size:1.8rem;margin:3px 0}.tracker-result span{color:#657087}.legal-note{font-size:.78rem;color:#7a8498;margin:16px 0 0}@media(max-width:760px){.tracker-form{grid-template-columns:1fr}.tracker-result{align-items:stretch;flex-direction:column}.tracker-result .secondary{width:100%}}</style>
+  <link rel="manifest" href="manifest.json?v=7" />
+  <link rel="stylesheet" href="styles.css?v=7" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <style>
+    .live{background:#ffe7e7;color:#a42020}.radar-panel{overflow:hidden;position:relative}.radar-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-end}.radar-toolbar{display:grid;grid-template-columns:1fr auto;gap:12px;margin:18px 0}.radar-toolbar input{padding:14px;border:1px solid var(--line);border-radius:12px;font:inherit;background:#fbfcfe}.radar-meta{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0;color:#667085;font-size:.9rem}.radar-meta span{background:#f4f6fb;padding:8px 10px;border-radius:999px}.radar-map{height:520px;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:#dfe6f3}.plane-marker{background:transparent;border:0}.plane-marker div{font-size:23px;line-height:28px;text-align:center;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}.legal-note{font-size:.78rem;color:#7a8498;margin:14px 0 0}@media(max-width:760px){.radar-toolbar{grid-template-columns:1fr}.radar-map{height:430px}.radar-head{align-items:flex-start;flex-direction:column}}
+  </style>
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(registrations => registrations.forEach(reg => reg.unregister()));
-    }
-    if ('caches' in window) {
-      caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
-    }
+    if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister()));
+    if ('caches' in window) caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
   </script>
 </head>
 <body>
@@ -25,21 +24,16 @@
   <main>
     <section class="hero"><div class="hero-overlay"><p class="hero-kicker">Todo tu viaje, en un solo lugar</p><h2>¿A dónde querés viajar?</h2>
       <form id="searchForm" class="search-box"><input id="destinationInput" list="destinations" placeholder="Ej.: Bariloche, Río, Madrid..." required /><datalist id="destinations"><option value="Bariloche"></option><option value="Río de Janeiro"></option><option value="Madrid"></option><option value="Tokio"></option><option value="Lima"></option><option value="Santiago de Chile"></option></datalist><button type="submit">Explorar</button></form>
-      <div class="quick-actions"><button data-scroll="flightTracker">📡 Seguir vuelo</button><button data-scroll="cheapFlights">✈️ Vuelos baratos</button><button data-scroll="budgetPlanner">💰 Viajar con mi presupuesto</button><button data-scroll="airportMode">🛫 Modo aeropuerto</button></div>
+      <div class="quick-actions"><button data-scroll="liveRadar">📡 Radar en vivo</button><button data-scroll="cheapFlights">✈️ Vuelos baratos</button><button data-scroll="budgetPlanner">💰 Viajar con mi presupuesto</button><button data-scroll="airportMode">🛫 Modo aeropuerto</button></div>
     </div></section>
 
-    <section class="section panel tracker" id="flightTracker">
-      <div class="section-heading"><div><span class="eyebrow">RASTREO DE VUELOS</span><h2>Seguí un vuelo en Flightradar24</h2></div><span class="pill live">EN VIVO</span></div>
-      <p class="tracker-intro">Ingresá el número de vuelo, por ejemplo <strong>LA424</strong>. Nexo abrirá su seguimiento oficial en Flightradar24 sin guardar credenciales ni copiar datos.</p>
-      <form id="flightTrackerForm" class="tracker-form">
-        <label>Número de vuelo<input id="trackerFlight" autocomplete="off" placeholder="Ej.: LA424" maxlength="10" required /></label>
-        <button class="primary" type="submit">Ver vuelo en vivo</button>
-      </form>
-      <div id="trackerResult" class="tracker-result hidden">
-        <div><small>VUELO SELECCIONADO</small><strong id="trackedFlight">—</strong><span>Seguimiento provisto por Flightradar24</span></div>
-        <button class="secondary" id="openFr24Btn" type="button">Abrir mapa en vivo ↗</button>
-      </div>
-      <p class="legal-note">La posición en vivo depende de la cobertura disponible. No debe usarse para decisiones operativas o de seguridad.</p>
+    <section class="section panel radar-panel" id="liveRadar">
+      <div class="radar-head"><div><span class="eyebrow">TRÁFICO AÉREO EN VIVO</span><h2>Radar Nexo · Buenos Aires</h2></div><span class="pill live">EN VIVO</span></div>
+      <p class="tracker-intro">Mirá las aeronaves detectadas alrededor de Aeroparque sin salir de Nexo. Tocá un avión para ver callsign, matrícula, altitud, velocidad y rumbo.</p>
+      <div class="radar-toolbar"><input id="radarSearch" placeholder="Buscar callsign o matrícula, ej. LAN424" autocomplete="off" /><button class="primary" id="radarRefresh" type="button">Actualizar radar</button></div>
+      <div class="radar-meta"><span id="radarStatus">Conectando…</span><span id="radarCount">—</span><span id="radarUpdated">Sin actualizar</span></div>
+      <div id="radarMap" class="radar-map" aria-label="Mapa de aeronaves en vivo"></div>
+      <p class="legal-note">Datos abiertos ADS-B provistos por adsb.fi. Pueden existir demoras, zonas sin cobertura o datos incompletos. No usar para decisiones operativas ni de seguridad.</p>
     </section>
 
     <section class="section" id="recommendations"><div class="section-heading"><div><span class="eyebrow">INSPIRACIÓN</span><h2>Destinos recomendados</h2></div><button class="text-btn" id="shuffleBtn">Cambiar</button></div><div class="card-grid" id="destinationCards"></div></section>
@@ -50,10 +44,13 @@
       <form id="budgetForm" class="form-grid"><label>Presupuesto total<input id="tripBudget" type="number" min="1" value="700000" required /></label><label>Días de viaje<input id="tripDays" type="number" min="1" max="60" value="7" required /></label><label>Estilo<select id="travelStyle"><option value="equilibrado">Equilibrado</option><option value="economico">Económico</option><option value="confort">Confort</option></select></label><label>Mes<select id="travelMonth"><option>Agosto</option><option>Septiembre</option><option>Octubre</option><option>Noviembre</option><option>Diciembre</option></select></label><button class="primary full" type="submit">Buscar destinos posibles</button></form><div id="budgetResults" class="mini-grid"></div>
     </section>
     <section class="section panel airport" id="airportMode"><div class="section-heading"><div><span class="eyebrow">FUNCIÓN DIFERENCIAL</span><h2>Modo aeropuerto</h2></div><label class="switch"><input type="checkbox" id="airportToggle" /><span></span></label></div><p class="muted">Al activarlo, la app muestra primero la información más urgente de tu viaje.</p><div id="airportContent" class="airport-content disabled"><div class="flight-status"><div><small>PRÓXIMO VUELO</small><strong>LA 424</strong><span>AEP → SCL</span></div><div class="status on-time">A horario</div></div><div class="flight-facts"><div><small>Puerta</small><strong>14</strong></div><div><small>Embarque</small><strong>10:40</strong></div><div><small>Salida</small><strong>11:20</strong></div><div><small>Caminata</small><strong>8 min</strong></div></div><button class="secondary" id="notifyFlightBtn">Activar avisos del vuelo</button></div></section>
-    <section class="section" id="plans"><div class="section-heading"><div><span class="eyebrow">MODELO FREEMIUM</span><h2>Planes</h2></div></div><div class="plans-grid"><article class="plan-card"><span class="pill free">GRATIS</span><h3>Explorador</h3><p>Para descubrir, organizar y seguir tus viajes.</p><ul><li>Destinos, fotos y recomendaciones</li><li>Seguimiento externo en Flightradar24</li><li>Alertas básicas de vuelos baratos</li><li>Modo aeropuerto</li><li>3 consultas IA por día</li></ul><button class="secondary">Plan actual</button></article><article class="plan-card featured"><span class="pill premium">PREMIUM</span><h3>Viajero Pro</h3><p>Para quien quiere que la app piense y avise sola.</p><ul><li>Datos en vivo mediante API oficial</li><li>Alertas ilimitadas y predicción de precio</li><li>Itinerarios automáticos completos</li><li>Mapas y documentos sin conexión</li><li>Seguimiento de cambios de puerta y demoras</li><li>Compartir viaje en tiempo real</li></ul><button class="primary" id="premiumBtn">Probar Premium</button></article></div></section>
+    <section class="section" id="plans"><div class="section-heading"><div><span class="eyebrow">MODELO FREEMIUM</span><h2>Planes</h2></div></div><div class="plans-grid"><article class="plan-card"><span class="pill free">GRATIS</span><h3>Explorador</h3><p>Para descubrir, organizar y seguir tus viajes.</p><ul><li>Radar ADS-B integrado</li><li>Destinos, fotos y recomendaciones</li><li>Alertas básicas de vuelos baratos</li><li>Modo aeropuerto</li><li>3 consultas IA por día</li></ul><button class="secondary">Plan actual</button></article><article class="plan-card featured"><span class="pill premium">PREMIUM</span><h3>Viajero Pro</h3><p>Para quien quiere que la app piense y avise sola.</p><ul><li>Seguimiento personalizado de vuelos</li><li>Alertas ilimitadas y predicción de precio</li><li>Itinerarios automáticos completos</li><li>Mapas y documentos sin conexión</li><li>Seguimiento de cambios de puerta y demoras</li><li>Compartir viaje en tiempo real</li></ul><button class="primary" id="premiumBtn">Probar Premium</button></article></div></section>
   </main>
-  <nav class="bottom-nav"><button class="active" data-scroll="recommendations">⌂<span>Inicio</span></button><button data-scroll="flightTracker">📡<span>Rastrear</span></button><button data-scroll="airportMode">▣<span>Aeropuerto</span></button><button data-scroll="plans">★<span>Premium</span></button></nav>
+  <nav class="bottom-nav"><button class="active" data-scroll="recommendations">⌂<span>Inicio</span></button><button data-scroll="liveRadar">📡<span>Radar</span></button><button data-scroll="airportMode">▣<span>Aeropuerto</span></button><button data-scroll="plans">★<span>Premium</span></button></nav>
   <dialog id="destinationModal"><button class="close" id="closeModal">×</button><img id="modalImage" alt="" /><div class="modal-content"><span class="eyebrow" id="modalCountry"></span><h2 id="modalTitle"></h2><p id="modalDescription"></p><div class="facts" id="modalFacts"></div><h3>La posta</h3><p id="modalTruth" class="truth"></p><button class="primary" id="buildTripBtn">Armame este viaje</button></div></dialog>
-  <div id="toast" class="toast"></div><script src="app.js?v=6"></script>
+  <div id="toast" class="toast"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="app.js?v=7"></script>
+  <script src="radar.js?v=7"></script>
 </body>
 </html>
